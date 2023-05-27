@@ -1,6 +1,6 @@
 <template>
     <div>
-        <table>
+        <table id="plantClick">
             <tr>
                 <td v-for="item in plants" :key="item.plant">
                     <img :src=item.image style="width: 85px; height: 85px;">
@@ -18,8 +18,13 @@
                     <input :id="key" type="text" value = 0 style="width: 40px">
                 </td>
             </tr>
+            <tr>
+                <td v-for="(value, key, index) in plantCircles" :key="index">
+                     <li></li>
+                </td>
+            </tr>
         </table>
-
+        <br>
         <table id = 'plotChange'>
                 <tr>
                     <td> <button v-on:click="changeSize">Change Width</button></td>
@@ -47,8 +52,7 @@ export default {
     data () {
         return {
             plants: plantsInfo,
-            countStuff: [],
-
+            
             // Default dimensions of garden
             plotWidth: 3.5,
             plotHeight: 3,
@@ -104,8 +108,19 @@ export default {
         },
 
         createCircle () {
-            this.plantCircles.push("Plant")
+            /*
+            this.configCircle.radius = 20
+            this.configCircle.x = 600
+            this.configCircle.y =  600
+            this.configCircle.fill = "red",
+            this.configCircle.stroke = "black",
+            this.configCircle.strokeWidth = 5,
+             */   
+            this.plantCircles.push() 
+               
+                
             console.log(this.plantCircles)
+            
         }
     }
 }
