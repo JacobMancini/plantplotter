@@ -18,21 +18,17 @@
                     <input :id="key" type="text" value = 0 style="width: 40px">
                 </td>
             </tr>
-            <tr>
-                <td v-for="(value, key, index) in plantCircles" :key="index">
-                     <li></li>
-                </td>
-            </tr>
+            
         </table>
         <br>
         <table id = 'plotChange'>
                 <tr>
-                    <td> <button v-on:click="changeSize">Change Width</button></td>
-                    <td> <input type ="text" name="plotWidth" v-model="plotWidth" style="width: 30px;"> metres </td>
+                    <td> <button v-on:click="changeSize">Change Plot Size (metres)</button></td>
+                    <td>Width: <input type ="text" name="plotWidth" v-model="plotWidth" style="width: 30px;"> </td>
+                    <td>Height: <input type ="text" name="plotHeight" v-model="plotHeight" style="width: 30px;"> </td>
                 </tr>
                 <tr>
-                    <td> <button v-on:click="changeSize">Change Height</button> </td>
-                    <td> <input type ="text" name="plotHeight" v-model="plotHeight" style="width: 30px;"> metres </td>
+                    
                 </tr>
             </table>
             <v-stage :config = "configKonva">
@@ -72,7 +68,7 @@ export default {
                 y: 600,
                 fill: "red",
                 stroke: "black",
-                strokeWidth: 5,
+                strokeWidth: 3,
                 draggable: true,
             },
             // Garden size
@@ -89,22 +85,26 @@ export default {
     },
     mounted () {
     },
+    
     methods: {
         // +1 from plant count
         add (id) {
             document.getElementById(id).value = Number(document.getElementById(id).value) + 1;
+            this.plantCircles.push(id) 
         },
         // -1 from plant count
         remove (id) {
-            if (document.getElementById(id).value > 0)
-            document.getElementById(id).value = Number(document.getElementById(id).value) -1;
+            if (document.getElementById(id).value > 0){
+                document.getElementById(id).value = Number(document.getElementById(id).value) - 1;
+                this.plantCircles.splice(this.plantCircles.lastIndexOf(id), 1) 
+                // Removing last instance of plant from array
+            }
         },
 
          // Resizing garden
          changeSize () {
             this.configPlot.width = this.plotWidth * 100
             this.configPlot.height = this.plotHeight * 100
-            this.createCircle()
         },
 
         createCircle () {
@@ -115,26 +115,26 @@ export default {
             this.configCircle.fill = "red",
             this.configCircle.stroke = "black",
             this.configCircle.strokeWidth = 5,
-             */   
+               
             this.plantCircles.push() 
                
                 
             console.log(this.plantCircles)
-            
+            */ 
         }
     }
 }
 </script>
 
 <style>
-li {
-    display: inline-block;
-}
+
 
 table {
     margin-left: auto;
     margin-right: auto;
     
 }
+
+
 
 </style>
