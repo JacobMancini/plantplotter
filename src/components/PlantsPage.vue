@@ -27,15 +27,12 @@
                     <td>Width: <input type ="text" name="plotWidth" v-model="plotWidth" style="width: 30px;"> </td>
                     <td>Height: <input type ="text" name="plotHeight" v-model="plotHeight" style="width: 30px;"> </td>
                 </tr>
-                <tr>
-                    
-                </tr>
+                
             </table>
             <v-stage :config = "configKonva">
                 <v-layer>
-                    
                     <v-rect :config = "configPlot"></v-rect>
-                    <v-circle :config = "configCircle"></v-circle>
+                    <v-circle v-for="circle in plantCircles" :key="circle.id"  :config = "circle"></v-circle>
                 </v-layer>
             </v-stage>
     </div>
@@ -50,8 +47,8 @@ export default {
             plants: plantsInfo,
             
             // Default dimensions of garden
-            plotWidth: 3.5,
-            plotHeight: 3,
+            plotWidth: 11,
+            plotHeight: 10.5,
 
             // Array of circles for plants    
             plantCircles: [],
@@ -75,8 +72,8 @@ export default {
             configPlot: {
                 x: 10,
                 y: 10,
-                width: 350,
-                height: 300,
+                width: 1100,
+                height: 1050,
                 fill: "brown",
                 stroke: "black",
                 strokeWidth: 3,
@@ -90,6 +87,7 @@ export default {
         // +1 from plant count
         add (id) {
             document.getElementById(id).value = Number(document.getElementById(id).value) + 1;
+            this.createCircle(id);
             this.plantCircles.push(id) 
         },
         // -1 from plant count
@@ -107,23 +105,19 @@ export default {
             this.configPlot.height = this.plotHeight * 100
         },
 
-        createCircle () {
-            /*
-            this.configCircle.radius = 20
-            this.configCircle.x = 600
-            this.configCircle.y =  600
-            this.configCircle.fill = "red",
-            this.configCircle.stroke = "black",
-            this.configCircle.strokeWidth = 5,
-               
-            this.plantCircles.push() 
-               
-                
-            console.log(this.plantCircles)
-            */ 
+        createCircle (id) {
+            this.plantCircles.push({
+                    "radius": this.plants[id].radius,
+                    "x": Math.random() * (this.configPlot.width + 10),
+                    "y": Math.random() * (this.configPlot.height + 10),
+                    "fill": this.plants[id].colour,
+                    "stroke": "black",
+                    "strokeWidth": 2,
+                    "draggable": true,
+                }); 
+            }    
         }
     }
-}
 </script>
 
 <style>
