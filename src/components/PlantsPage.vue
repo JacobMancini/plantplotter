@@ -14,30 +14,30 @@
             </tr>
             <tr>
                 <td v-for="(value, key, index) in plants" :key="index">
-                    <input :id="key" type="text" value = 0 style="width: 40px">
+                    <input :id="key" type="text" v-model="plantCount" style="width: 40px">
                 </td>
             </tr>
         </table>
         <br>
         <table id = 'plotChange'>
             <tr>
-                <td> <button v-on:click="changeSize">Change Plot Size (metres)</button></td>
-                <td>Width: <input type ="text" name="plotWidth" v-model="plotWidth" style="width: 30px;" @input=changeSize> </td>
-                <td>Height: <input type ="text" name="plotHeight" v-model="plotHeight" style="width: 30px;" @input=changeSize> </td>
+                <td><label>Change Plot Size (metres):</label></td>
+                <td>Width: <input type ="text" name="plotWidth" v-model="plotWidth" style="width: 30px;" @input=changeSize></td>
+                <td>Height: <input type ="text" name="plotHeight" v-model="plotHeight" style="width: 30px;" @input=changeSize></td>
             </tr>
             <tr>
                 <td>
-                    <button v-on:click="clearPlot(id)">Clear Plot</button>
+                    <button v-on:click="clearPlot()">Clear Plot</button>
                 </td>
             </tr>
         </table>
         <br>
         <div style="text-align: center; width: 100%">
             <div style="display: inline-block;">
-                <v-stage :config = "configKonva">
+                <v-stage :config = "configKonva" >
                     <v-layer>
                         <v-rect :config = "configPlot"></v-rect>
-                        <v-circle v-for="circle in plantCircles" :key="circle.id"  :config = "circle"></v-circle>
+                        <v-circle v-for="circle in plantCircles" :key="circle.id" :config = "circle"></v-circle>  
                     </v-layer>
                 </v-stage>
             </div>
@@ -53,6 +53,9 @@ export default {
         return {
             plants: plantsInfo,
             
+            drag: true,
+            plantCount: 0,
+
             // Default dimensions of garden
             plotWidth: 6,
             plotHeight: 4,
@@ -74,8 +77,10 @@ export default {
                 stroke: "black",
                 strokeWidth: 3,
                 draggable: true,
+                id: null,
             },
-            // Garden size
+
+            // Garden
             configPlot: {
                 x: 0,
                 y: 0,
@@ -88,6 +93,7 @@ export default {
         }
     },
     mounted () {
+        
     },
     
     methods: {
@@ -100,8 +106,8 @@ export default {
         remove (id) {
             if (document.getElementById(id).value > 0){
                 document.getElementById(id).value = Number(document.getElementById(id).value) - 1;
-                this.plantCircles.splice(this.plantCircles.lastIndexOf(this.plantCircles.id), 1) 
-                // Removing last instance of plant from array
+                this.plantCircles.splice(this.plantCircles.id, 1)
+                // Removing last instance of plant from array   
             }
         },
 
@@ -113,6 +119,14 @@ export default {
 
         clearPlot () {
             this.plantCircles = []
+            this.plantCount = -1
+            if (this.plantCount == -1) {
+                this.plantCount = 0
+            }
+            // For some reason setting plantCount to zero does not set the counter of any plants that were modified. i.e. If Pumpkin was four, it would not reset.
+            // Setting plantCount to any other number than zero does set all counters to that number, regardless of the number already displayed in the counter.
+            // Hence, the above code sets plantCount to -1 and then 0.
+
         },
 
         createCircle (id) {
@@ -124,10 +138,26 @@ export default {
                     "stroke": "black",
                     "strokeWidth": 2,
                     "draggable": true,
-                    "id": this.plants[id].id,
+                    "id": String(this.plants[id].id), // Konva does not like id being a number
+                    // "id:" this.plants[id].id returns:
+                    //Konva warning: 9 is a not valid value for "id" attribute. The value should be a string.
                 }); 
-            }    
-        }
+            },  
+
+        dragging () { // Using a while loop and drag bool freezes the application. Can I call dragging somewhere other than v-circle?
+            if (this.plantCircles.x < (this.configPlot.width - this.plantCircles.radius) && this.plantCircles.y < (this.configPlot.height - this.plantCircles.radius)) {
+            this.plantCircles.draggable = true
+            }
+            else {
+                this.plantCircles.draggable = false
+                this.plantCircles.x = this.plantCircles.x - this.plantCircles.radius
+                this.plantCircles.y = this.plantCircles.y - this.plantCircles.radius
+            }
+                
+            }
+            
+
+        }, 
     }
 </script>
 
@@ -137,8 +167,14 @@ export default {
 table {
     margin-left: auto;
     margin-right: auto;
-
+ 
     
+}
+
+#plotChange, td{
+    font-size: 16px;
+    font-family: Arial;
+    font-weight: 100;
 }
 
 button {
