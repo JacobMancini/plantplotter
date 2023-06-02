@@ -62,6 +62,7 @@ export default {
 
             // Array of circles for plants    
             plantCircles: [],
+            plantOrder: [],
 
             configKonva: {
                 width: 600,
@@ -98,15 +99,18 @@ export default {
     
     methods: {
         // +1 from plant count
-        add (id) {
-            document.getElementById(id).value = Number(document.getElementById(id).value) + 1;
-            this.createCircle(id);
+        add (plantId) {
+            document.getElementById(plantId).value = Number(document.getElementById(plantId).value) + 1;
+            this.createCircle(plantId);
+            this.plantOrder.push(plantId);
         },
         // -1 from plant count
-        remove (id) {
-            if (document.getElementById(id).value > 0){
-                document.getElementById(id).value = Number(document.getElementById(id).value) - 1;
-                this.plantCircles.splice(this.plantCircles.id, 1)
+        remove (plantId) {
+            if (document.getElementById(plantId).value > 0){
+                document.getElementById(plantId).value = Number(document.getElementById(plantId).value) - 1;
+                const indexOfPlant = this.plantOrder.lastIndexOf(plantId);
+                this.plantOrder.splice(indexOfPlant,1);
+                this.plantCircles.splice(indexOfPlant, 1);
                 // Removing last instance of plant from array   
             }
         },
@@ -129,17 +133,17 @@ export default {
 
         },
 
-        createCircle (id) {
+        createCircle (plantId) {
             this.plantCircles.push({
-                    "radius": this.plants[id].radius,
-                    "x": Math.floor(Math.random() * (this.configPlot.width - 2 * (this.plants[id].radius)) + this.plants[id].radius),
-                    "y": Math.floor(Math.random() * (this.configPlot.height - 2 * (this.plants[id].radius)) + this.plants[id].radius),
-                    "fill": this.plants[id].colour,
+                    "radius": this.plants[plantId].radius,
+                    "x": Math.floor(Math.random() * (this.configPlot.width - 2 * (this.plants[plantId].radius)) + this.plants[plantId].radius),
+                    "y": Math.floor(Math.random() * (this.configPlot.height - 2 * (this.plants[plantId].radius)) + this.plants[plantId].radius),
+                    "fill": this.plants[plantId].colour,
                     "stroke": "black",
                     "strokeWidth": 2,
                     "draggable": true,
-                    "id": String(this.plants[id].id), // Konva does not like id being a number
-                    // "id:" this.plants[id].id returns:
+                    "id": String(this.plants[plantId].id), // Konva does not like id being a number
+                    // "id:" this.plants[plantId].id returns:
                     //Konva warning: 9 is a not valid value for "id" attribute. The value should be a string.
                 }); 
             },  
