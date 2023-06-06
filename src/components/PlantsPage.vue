@@ -97,19 +97,21 @@ export default {
     },
     
     computed: {
-        seasonalPlants() {
+        seasonalPlants(plantId) {
             if (this.currentSeason === "none") {
                 return this.plants;
             }
-
+            
+            // Filtering plants based on current season
             const seasonalPlant = {};
-            for (const plantKey in this.plants) {
-                const plantInSeason = this.plants[plantKey];
-                if (plantInSeason.season.includes(this.currentSeason) || !this.currentSeason) {
-                    seasonalPlant[plantKey] = plantInSeason;
+            for (plantId in this.plants) {
+                if (this.plants[plantId].season.includes(this.currentSeason) || !this.currentSeason) {
+                    seasonalPlant[plantId] = this.plants[plantId];
                 }
+                
             }
             return seasonalPlant;
+            
         },
     },
 
