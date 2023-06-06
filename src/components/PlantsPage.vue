@@ -3,18 +3,18 @@
         <h1>Plant Plotter</h1>
         <table id="plantClick">
             <tr>
-                <td v-for="item in plants" :key="item.plant">
+                <td v-for="item in seasonalPlants" :key="item.plant">
                     <img :src=item.image style="width: 85px; height: 85px;">
                 </td>
             </tr>
             <tr>
-                <td v-for="(value, key, index) in plants" :key="index" style="padding-left: 5px; padding-right: 5px;">
+                <td v-for="(value, key, index) in seasonalPlants" :key="index" style="padding-left: 5px; padding-right: 5px;">
                     <button v-on:click="add(key)">+1 {{ plants[key].plant }}</button> 
                     <button v-on:click="remove(key)">-1</button>
                 </td>
             </tr>
             <tr>
-                <td v-for="(value, key, index) in plants" :key="index">
+                <td v-for="(value, key, index) in seasonalPlants" :key="index">
                     <input :id="key" type="text" v-model="plantCount" style="width: 40px" readonly>
                 </td>
             </tr>
@@ -32,6 +32,16 @@
             <tr>
                 <td>
                     <button v-on:click="clearPlot()">Clear Plot</button>
+                </td>
+                <td>
+                    <select v-model="currentSeason">
+                        <option value="null" selected hidden>Choose a Season</option>
+                        <option value="Summer">Summer</option>
+                        <option value="Autumn">Autumn</option>
+                        <option value="Winter">Winter</option>
+                        <option value="Spring">Spring</option>
+                        <option value="none">None</option>
+                    </select>
                 </td>
             </tr>
         </table>
@@ -58,6 +68,7 @@ export default {
             plants: plantsInfo,
             
             plantCount: 0,
+            currentSeason: null,
 
             // Default dimensions of garden
             plotWidth: 6,
@@ -82,6 +93,30 @@ export default {
                 stroke: "black",
                 strokeWidth: 3,
             },
+        }
+    },
+    
+    computed: {
+        seasonalPlants() {
+            if (this.currentSeason === "none") {
+                return this.plants;
+            }
+
+            const seasonalPlant = {};
+            for (const plantKey in this.plants) {
+                const plantInSeason = this.plants[plantKey];
+                if (plantInSeason.season.includes(this.currentSeason) || !this.currentSeason) {
+                    seasonalPlant[plantKey] = plantInSeason;
+                }
+            }
+            return seasonalPlant;
+        },
+    },
+
+    watch: {
+        currentSeason () {
+            this.clearPlot()
+            // Clearing the plot when the season changes
         }
     },
 
