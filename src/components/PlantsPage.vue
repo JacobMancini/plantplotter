@@ -36,6 +36,7 @@
                 <td>
                     <select v-model="currentSeason">
                         <option value="null" selected hidden>Choose a Season</option>
+                        <option value="" disabled>This clears the plot!</option>
                         <option value="Summer">Summer</option>
                         <option value="Autumn">Autumn</option>
                         <option value="Winter">Winter</option>
@@ -48,7 +49,7 @@
         <br>
         <div style="text-align: center; width: 100%; height: 100%">
             <div style="display: inline-block;">
-                <v-stage :config = "configKonva" >
+                <v-stage :config = "configKonva">
                     <v-layer>
                         <v-rect :config = "configPlot"></v-rect>
                         <v-circle v-for="circle in plantCircles" :key="circle.id" :config = "circle" v-on:dragmove="dragging"></v-circle>  
@@ -97,18 +98,16 @@ export default {
     },
     
     computed: {
-        seasonalPlants(plantId) {
+        seasonalPlants(plant) {
             if (this.currentSeason === "none") {
                 return this.plants;
             }
-            
             // Filtering plants based on current season
             const seasonalPlant = {};
-            for (plantId in this.plants) {
-                if (this.plants[plantId].season.includes(this.currentSeason) || !this.currentSeason) {
-                    seasonalPlant[plantId] = this.plants[plantId];
+            for (plant in this.plants) {
+                if (this.plants[plant].season.includes(this.currentSeason) || !this.currentSeason) {
+                    seasonalPlant[plant] = this.plants[plant];
                 }
-                
             }
             return seasonalPlant;
             
@@ -187,8 +186,7 @@ export default {
                 x: newX,
                 y: newY,
                 
-            });      
-
+            }); 
         },
          
         
